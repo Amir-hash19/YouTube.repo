@@ -37,7 +37,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ads.apps.AdsConfig',
+    'channle.apps.ChannleConfig',
+    'comments_like.apps.CommentsLikeConfig',
+    'notifications.apps.NotificationsConfig',
+    'search.apps.SearchConfig',
+    'user_managment.apps.UserManagmentConfig',
+    'video.apps.VideoConfig',
+    'rest_framework',
+    'django_celery_beat',
+    'rest_framework_simplejwt',
+    'drf_yasg',
+    'django_filters',
+    'rest_framework_simplejwt.token_blacklist',
+    'storages'
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,12 +89,15 @@ WSGI_APPLICATION = 'YouTube.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "YouTube_db",
+        "USER": "admin",
+        "PASSWORD": "amir112233",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
