@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'YouTube.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "YouTube_db",
+        "NAME": "youtube_db",
         "USER": "admin",
         "PASSWORD": "amir112233",
         "HOST": "localhost",
@@ -151,3 +151,6 @@ SIMPLE_JWT = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+AUTH_USER_MODEL = "user_managment.UserAccount"
