@@ -42,7 +42,7 @@ class SocialLink(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'platform')  # جلوگیری از تکرار یک پلتفرم برای یک کاربر
+        unique_together = ('channel', 'platform')  # جلوگیری از تکرار یک پلتفرم برای یک کاربر
 
     def __str__(self):
         return f"{self.user.username} - {self.platform}"

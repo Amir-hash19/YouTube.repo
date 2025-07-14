@@ -2,8 +2,9 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.utils.text import slugify
+from .exceptions import (MissingEmailError, EmailAlreadyExistsError, InvalidGenderError,
+MissingUsernameError, UsernameAlreadyExistsError, WeakPasswordError)
 import re
-from .exceptions import MissingEmailError, EmailAlreadyExistsError, InvalidGenderError, MissingUsernameError, UsernameAlreadyExistsError, WeakPasswordError
 
 
 
