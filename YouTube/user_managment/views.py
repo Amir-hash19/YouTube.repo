@@ -1,6 +1,9 @@
 from rest_framework.generics import CreateAPIView
 from .models import UserAccount, UserAvatar
-from .serializers import CreateUserAccountSerializer, LoginSerializer, CreateUserAvatarSerializer, UserAvatarSerializer
+
+from .serializers import( CreateUserAccountSerializer, LoginSerializer,
+CreateUserAvatarSerializer, UserAvatarSerializer, EditUserAccountSerializer)
+
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.views import Response
@@ -8,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .throttles import SignUpRateThrottle, LoginRateThrottle
 from django.db import transaction
-
+from django.shortcuts import get_object_or_404
 
 
 
@@ -99,6 +102,34 @@ class EditAvatar(APIView):
             return Response({"detail": "Avatar not found."}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = UserAvatarSerializer(avatar, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+class EditUserAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, slug, request):
+        user = get_object_or_404(UserAccount, slug=slug)
+        if user != request.user:
+            return None
+        return user
+
+    def patch(self, request):
+        serializer = EditUserAccountSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        serializer = EditUserAccountSerializer(request.user, data=request.data, partial=False)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
