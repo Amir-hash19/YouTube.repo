@@ -1,6 +1,6 @@
 from rest_framework.generics import CreateAPIView
-from .models import UserAccount
-from .serializers import CreateUserAccountSerializer, LoginSerializer
+from .models import UserAccount, UserAvatar
+from .serializers import CreateUserAccountSerializer, LoginSerializer, CreateUserAvatarSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.views import Response
@@ -40,9 +40,6 @@ class CreateUserAccountView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
-
 class LoginView(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [LoginRateThrottle]
@@ -52,4 +49,21 @@ class LoginView(APIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+class CreateUserAvatar(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        serializer = CreateUserAvatarSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(
+                user = request.user
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     
