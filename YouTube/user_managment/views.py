@@ -1,12 +1,12 @@
 from rest_framework.generics import CreateAPIView
 from .models import UserAccount
-from .serializers import CreateUserAccountSerializer
+from .serializers import CreateUserAccountSerializer, LoginSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.views import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .throttles import SignUpRateThrottle
+from .throttles import SignUpRateThrottle, LoginRateThrottle
 from django.db import transaction
 
 
@@ -38,3 +38,18 @@ class CreateUserAccountView(APIView):
             }, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+    throttle_classes = [LoginRateThrottle]
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+    
