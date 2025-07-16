@@ -17,9 +17,6 @@ class CustomUserManager(BaseUserManager):
             raise EmailAlreadyExistsError()
         
         email = self.normalize_email(email)
-
-        if len(password) != 8:
-            raise WeakPasswordError()
         
         allowed_genders = ["male", "female"]
         if gender and gender not in allowed_genders:
