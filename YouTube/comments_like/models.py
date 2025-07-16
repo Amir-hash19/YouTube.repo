@@ -7,8 +7,8 @@ from user_managment.models import UserAccount
 
 
 class Comment(models.Model):
-    video = models.ForeignKey(to=Video, on_delete=models.CASCADE, related_name="comments")
-    user = models.ForeignKey(to=UserAccount, on_delete=models.CASCADE, related_name="comments")
+    video = models.ForeignKey(to=Video, on_delete=models.CASCADE, related_name="video_comments")
+    user = models.ForeignKey(to=UserAccount, on_delete=models.CASCADE, related_name="userـcomments")
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -36,14 +36,18 @@ class LikeDislike(models.Model):
         ("dislike", "Dislike")
     )    
 
-    comment = models.ForeignKey(to=Comment, on_delete=models.CASCADE, related_name="likes_dislikes")
-    user = models.ForeignKey(to=UserAccount, on_delete=models.CASCADE)
+    comment = models.ForeignKey(to=Comment, on_delete=models.CASCADE, blank=True,  related_name="reaction_comments")
+    video = models.ForeignKey(to=Video, on_delete=models.CASCADE, blank=True)
+    user = models.ForeignKey(to=UserAccount, on_delete=models.CASCADE, related_name="user_reaction")
     value = models.CharField(choices=LIKE_CHOICES, max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
     class Meta:
-        unique_together = ("comment", "user")
+        constraints = [
+            models.UniqueConstraint(fields=['comment', 'user'], name="unique_comment_user"),
+            models.UniqueConstraint(fields=['video', 'user'], name="unique_video_user")
+        ]
 
 
     def __str__(self):

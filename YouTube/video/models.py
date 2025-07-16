@@ -4,6 +4,7 @@ from channle.models import Channel
 
 
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -27,8 +28,8 @@ class Video(models.Model):
     )
     video_status = models.CharField(max_length=20, choices=VIDEO_STATUS, default="draft")
 
-    #comments
-    #likes/dislikes
+   
+  
     tags = models.ManyToManyField(to=Tag, blank=True,related_name="videos_tag")
     slug = models.SlugField(unique=True, max_length=255)
 
