@@ -1,6 +1,6 @@
 from rest_framework.generics import CreateAPIView
 from .models import UserAccount, UserAvatar
-from .serializers import CreateUserAccountSerializer, LoginSerializer, CreateUserAvatarSerializer
+from .serializers import CreateUserAccountSerializer, LoginSerializer, CreateUserAvatarSerializer, UserAvatarSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.views import Response
@@ -40,6 +40,8 @@ class CreateUserAccountView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [LoginRateThrottle]
@@ -67,3 +69,37 @@ class CreateUserAvatar(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
+
+
+class EditAvatar(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        """
+        ویرایش کامل آواتار کاربر (جایگزینی تصویر)
+        """
+        try:
+            avatar = request.user.image  # OneToOne relation
+        except UserAvatar.DoesNotExist:
+            return Response({"detail": "Avatar not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserAvatarSerializer(avatar, data=request.data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request):
+        """
+        ویرایش جزئی آواتار (مثلاً فقط تصویر)
+        """
+        try:
+            avatar = request.user.avatar
+        except UserAvatar.DoesNotExist:
+            return Response({"detail": "Avatar not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserAvatarSerializer(avatar, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
