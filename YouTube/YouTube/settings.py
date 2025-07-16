@@ -136,7 +136,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+
+    'DEFAULT_THROTTLE_RATES': {
+    'anon': '5/min',
+    'signup': '3/min',
+
+    }
 }
 
 
@@ -154,3 +164,25 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 AUTH_USER_MODEL = "user_managment.UserAccount"
+
+
+
+# import os
+# MAILTRAP_API_TOKEN = os.getenv("MAILTRAP_API_TOKEN")
+
+
+
+
+
+
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "sandbox.smtp.mailtrap.io"  # یا آدرس SMTP که Mailtrap داده
+# EMAIL_HOST_USER = '954054bea74b6f'  # از Mailtrap بگیر
+# EMAIL_HOST_PASSWORD = "05107d414a8c71"  # از Mailtrap بگیر
+# EMAIL_PORT = 2525  # یا پورتی که Mailtrap داده
+# EMAIL_USE_TLS = True  # معمولاً TLS فعال است
+
+
+
+# # Looking to send emails in production? Check out our Email API/SMTP product!
+# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
