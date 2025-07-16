@@ -57,3 +57,26 @@ class CreateUserAvatarSerializer(serializers.ModelSerializer):
         model = UserAvatar
         fields = ["username", "image", "uploaded_at"]
         read_only_fields = ['username', 'uploaded_at']
+
+
+
+
+
+
+class UserAvatarSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+
+    class Meta:
+        model = UserAvatar
+        fields = ['username', 'image', 'uploaded_at']
+        read_only_fields = ['username', 'uploaded_at']
+
+    def update(self, instance, validated_data):
+        # حذف آواتار قبلی از فضای ذخیره‌سازی در صورت نیاز
+        old_image = instance.image
+        new_image = validated_data.get("image", None)
+
+        if new_image and old_image and old_image.name != new_image.name:
+            old_image.delete(save=False)
+
+        return super().update(instance, validated_data)
