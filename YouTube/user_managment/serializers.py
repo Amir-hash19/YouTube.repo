@@ -80,3 +80,35 @@ class UserAvatarSerializer(serializers.ModelSerializer):
             old_image.delete(save=False)
 
         return super().update(instance, validated_data)
+    
+
+
+
+
+class EditUserAccountSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserAvatar
+        fields = ['username', 'email', 'birthday', 'gender']
+        read_only_fields = ['date_added']
+
+
+
+    def validate_email(self, value):
+        """
+        بررسی یکتا بودن ایمیل (در صورتی که کاربر ایمیل جدید وارد کرده باشد).
+        """
+        user = self.instance
+        if UserAccount.objects.exclude(slug=user.slug).filter(email=value).exists():
+            raise serializers.ValidationError("email already existed!")
+        return value
+
+    def update(self, instance, validated_data):
+        """
+        ویرایش فیلدهای مجاز و ذخیره آن‌ها در مدل User.
+        """
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance    
+
