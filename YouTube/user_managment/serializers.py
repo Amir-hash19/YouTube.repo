@@ -2,8 +2,8 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import UserAccount
-
-
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class CreateUserAccountSerializer(ModelSerializer):
@@ -29,6 +29,23 @@ class CreateUserAccountSerializer(ModelSerializer):
        
 
 
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            refresh = RefreshToken.for_user(user)
+            return {
+                "access":str(refresh.access_token),
+                "refresh":str(refresh),
+                "username":user.username
+            }  
+        raise serializers.ValidationError("username is incorrect or password not match!")
+    
 
 
 
