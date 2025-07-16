@@ -1,15 +1,14 @@
 from django.db import models
 from user_managment.models import UserAccount
-
-
-
+from ads.models import AdVideo
 
 
 
 class Channel(models.Model):
     title = models.CharField(unique=True, max_length=255)
     bio = models.TextField()
-    admin = models.ForeignKey(to=UserAccount, on_delete=models.CASCADE, related_name="admin_channels")
+    owner = models.ForeignKey(to=UserAccount, on_delete=models.CASCADE, related_name="owner_channels")
+    admins = models.ManyToManyField(to=UserAccount, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     picture = models.ImageField(upload_to="channels/pictures/", null=True, blank=True)
     subscribers = models.ManyToManyField(to=UserAccount, related_name="subscribed_channels", blank=True)
@@ -27,23 +26,22 @@ class SocialPlatform(models.TextChoices):
     INSTAGRAM = 'instagram', 'Instagram'
     FACEBOOK = 'facebook', 'Facebook'
     TWITTER = 'twitter', 'Twitter'
-    YOUTUBE = 'youtube', 'YouTube'
-    THREADS = 'threads', 'Threads'
-    TIKTOK = 'tiktok', 'TikTok'
+    GITHUB = "github", "GitHub"
     OTHER = 'other', 'Other'
 
 
 
 
 class SocialLink(models.Model):
-    channel = models.ForeignKey(to=Channel, on_delete=models.CASCADE)
+    channel = models.ForeignKey(to=Channel, on_delete=models.CASCADE, related_name="social_channel")
+    adsvideo_link = models.ForeignKey(to=AdVideo, on_delete=models.CASCADE, related_name="advideo_links")
     platform = models.CharField(max_length=50, choices=SocialPlatform.choices)
     url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(unique=True)
 
-    class Meta:
-        unique_together = ('channel', 'platform')  # جلوگیری از تکرار یک پلتفرم برای یک کاربر
+
 
     def __str__(self):
-        return f"{self.user.username} - {self.platform}"
+        return f"{self.platform}"
 
