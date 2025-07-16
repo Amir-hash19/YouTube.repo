@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from .models import UserAccount
+from .models import UserAccount, UserAvatar
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -49,3 +49,11 @@ class LoginSerializer(serializers.Serializer):
 
 
 
+
+class CreateUserAvatarSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    
+    class Meta:
+        model = UserAvatar
+        fields = ["username", "image", "uploaded_at"]
+        read_only_fields = ['username', 'uploaded_at']
