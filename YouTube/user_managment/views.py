@@ -171,3 +171,7 @@ class DeleteUserAvatarView(APIView):
 
         avatar.delete()
         return Response({"message":"Your Avatar deleted Successfully"}, status=status.HTTP_204_NO_CONTENT)        
+
+
+
+
