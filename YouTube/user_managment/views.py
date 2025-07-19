@@ -156,3 +156,18 @@ class DeleteUserAccountView(APIView):
     
 
 
+
+
+
+class DeleteUserAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        avatar = get_object_or_404(UserAccount, user=request.user)
+
+        if avatar.image:
+            avatar.image.delete(save=False)
+
+
+        avatar.delete()
+        return Response({"message":"Your Avatar deleted Successfully"}, status=status.HTTP_204_NO_CONTENT)        
