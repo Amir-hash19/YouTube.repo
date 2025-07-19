@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .throttles import SignUpRateThrottle, LoginRateThrottle
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-
+from rest_framework.exceptions import PermissionDenied
 
 
 # class CreateUserAccountView(CreateAPIView):
@@ -134,3 +134,25 @@ class EditUserAccountView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class DeleteUserAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self, slug, request):
+        user = get_object_or_404(UserAccount, slug=slug)
+        if user != request.user:
+            raise PermissionDenied("You are not allowed to delete this account")
+        return user
+
+
+    def delete(self, request, slug):
+        user = self.get_object(slug, request)
+        user.delete()
+        return Response({"message":"Your User Account deleted Successfully"})
+    
+
+
