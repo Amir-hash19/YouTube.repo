@@ -10,3 +10,8 @@ class SignUpRateThrottle(AnonRateThrottle):
 
 class LoginRateThrottle(AnonRateThrottle):
     scope = "login"
+
+
+
+class CreateChannelThrottle(AnonRateThrottle):
+    scope = "channel"
