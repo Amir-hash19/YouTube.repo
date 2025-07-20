@@ -30,3 +30,40 @@ class CreateChannelView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
+
+
+
+
+class SubscribeChannelView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, slug):
+        channel = get_object_or_404(Channel, slug=slug)
+        user = request.user
+
+        if user in channel.subscribers.all():
+            return Response({"detail":"You are already subscribed"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        channel.subscribers.add(user)
+        return Response({"detail":"Subscribed successfully"}, status=status.HTTP_200_OK)
+    
+
+
+
+class UnsubscribeChannelView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, slug):
+        channel = get_object_or_404(Channel, slug=slug)
+        user = request.user
+
+        if user not in channel.subscribers.all():
+            return Response({"detail":"You are not subscribed"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        channel.subscribers.remove(user)
+        return Response({"detail":"Unsubscribed successfully"}, status=status.HTTP_200_OK)
+    
+
