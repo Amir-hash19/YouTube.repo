@@ -1,11 +1,19 @@
-from django.db import models
+from django.core.exceptions import ValidationError
 from user_managment.models import UserAccount
 from ads.models import AdVideo
+from django.db import models
+import re 
 
+
+def validate_channel_id_with_special_characters(value):
+    special_chars = re.findall(r'[^a-zA-Z0-9]', value)
+    if len(special_chars) < 2:
+        raise ValidationError("Channel ID must be contain at least tow special charactes")
 
 
 class Channel(models.Model):
     title = models.CharField(unique=True, max_length=255)
+    channel_id = models.CharField(unique=True, max_length=150, validators=[validate_channel_id_with_special_characters])
     bio = models.TextField()
     owner = models.ForeignKey(to=UserAccount, on_delete=models.CASCADE, related_name="owner_channels")
     admins = models.ManyToManyField(to=UserAccount, blank=True)

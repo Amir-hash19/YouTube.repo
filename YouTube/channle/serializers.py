@@ -18,4 +18,39 @@ class CreateChannelSerializer(serializers.ModelSerializer):
         model = Channel
         fields = ["title", "bio", "admins", "picture"]
         read_only_fields = ["date_created", "slug", "subscribers"]
+
+
+
+
+
+class EditChannelSerializer(serializers.ModelSerializer):
+    admins = serializers.SlugRelatedField(
+        many=True,
+        slug_field="username",
+        queryset=UserAccount.objects.all(),
+        required=False,
+        allow_empty=True,
         
+    )
+    owner = serializers.SlugRelatedField(read_only=True, slug_field="username")
+    subscriber_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Channel
+        fields = [
+            "title", "bio", "picture", "admins"
+        ]
+        read_only_field = ["slgu", "date_created", "owner"]
+
+
+    def get_subscriber_count(self, obj):
+        return obj.subscribers_count()
+
+    def validate_admins(self, value):
+        request = self.context.get("request")
+        channel = self.instance
+
+
+        if request and channel:
+            if channel.owner != request.user:
+                raise serializers.ValidationError("Only the owner can change the channel admins.")        
