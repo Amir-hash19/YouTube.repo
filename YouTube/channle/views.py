@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from .models import Channel, SocialLink
 from rest_framework import status
 from rest_framework.views import Response
-from user_managment.throttles import SignUpRateThrottle, LoginRateThrottle, CreateChannelThrottle
+from user_managment.throttles import CreateChannelThrottle
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
@@ -98,3 +98,22 @@ class EditChannelView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+
+
+
+class DeleteChannelView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, channel_id):
+        channel = get_object_or_404(Channel, channel_id=channel_id)
+
+        if channel.owner != self.request.user:
+            raise PermissionDenied("Only the channel owner can delete it.")
+        return channel
+    
+
+    def delete(self, request, channel_id):
+        channel = self.get_object(channel_id)
+        channel.delete()
+        return Response({"message":"channel delete successfully"}, status=status.HTTP_204_NO_CONTENT)
