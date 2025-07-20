@@ -3,5 +3,5 @@ from .views import CreateChannelView
 
 
 urlpatterns = [
-    path("Channel/create/", CreateChannelView.as_view(), name="create-channel")
+    path("build/", CreateChannelView.as_view(), name="create-channel")
 ]
