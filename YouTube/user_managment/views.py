@@ -1,8 +1,8 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from .models import UserAccount, UserAvatar
 
 from .serializers import( CreateUserAccountSerializer, LoginSerializer,
-CreateUserAvatarSerializer, UserAvatarSerializer, EditUserAccountSerializer)
+CreateUserAvatarSerializer, UserAvatarSerializer, EditUserAccountSerializer, DetailUserAccountSerializer)
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
@@ -175,3 +175,10 @@ class DeleteUserAvatarView(APIView):
 
 
 
+
+class DetailAccountView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = DetailUserAccountSerializer
+
+    def get_object(self):
+        return self.request.user

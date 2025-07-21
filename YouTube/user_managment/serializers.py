@@ -114,3 +114,10 @@ class EditUserAccountSerializer(serializers.ModelSerializer):
         instance.save()
         return instance    
 
+
+
+class DetailUserAccountSerializer(ModelSerializer):
+    class Meta:
+        model = UserAccount
+        field = ["username", "email", "date_added", "gender"]
+        

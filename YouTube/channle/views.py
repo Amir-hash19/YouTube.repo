@@ -117,3 +117,10 @@ class DeleteChannelView(APIView):
         channel = self.get_object(channel_id)
         channel.delete()
         return Response({"message":"channel delete successfully"}, status=status.HTTP_204_NO_CONTENT)
+    
+
+
+
+
+
+    
