@@ -54,3 +54,27 @@ class EditChannelSerializer(serializers.ModelSerializer):
         if request and channel:
             if channel.owner != request.user:
                 raise serializers.ValidationError("Only the owner can change the channel admins.")        
+            
+
+
+
+
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAccount
+        fields = ['username', 'email']  
+
+class ChannelSerializer(serializers.ModelSerializer):
+    owner = UserSerializer(read_only=True)
+    admins = UserSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Channel
+        fields = ['channel_id', 'title', 'subscribers', 'owner', 'admins', "bio", "picture"]
+
+
+
+

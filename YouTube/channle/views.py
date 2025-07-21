@@ -7,7 +7,8 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import CreateChannelSerializer, EditChannelSerializer
+from rest_framework.permissions import BasePermission
+from .serializers import CreateChannelSerializer, EditChannelSerializer, ChannelSerializer, UserSerializer
 from django.db import transaction
 
 
@@ -123,4 +124,28 @@ class DeleteChannelView(APIView):
 
 
 
-    
+class IsOwnerOrChannelAdmin(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        is_owner = obj.owner == user
+        is_admin = obj.admins.filter(slug=user.slug).exist()
+        return is_admin or  is_owner
+
+
+
+
+        
+class DetailChannelView(APIView):
+    permission_classes = [IsAuthenticated, IsOwnerOrChannelAdmin]
+
+    def get(self, request, channel_id):
+        channel = get_object_or_404(Channel, channel_id=channel_id)
+        self.check_object_permissions(request, channel)
+
+
+        serializer = ChannelSerializer(channel)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
