@@ -10,8 +10,11 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.permissions import BasePermission
 from .serializers import CreateChannelSerializer, EditChannelSerializer, ChannelSerializer, UserSerializer
 from django.db import transaction
-
-
+from search.views import ChannelFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework import viewsets
+from search.views import SubChannelFilter
 
 
 class CreateChannelView(APIView):
@@ -149,3 +152,28 @@ class DetailChannelView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+
+class ChannelViewSet(viewsets.ModelViewSet):
+    queryset = Channel.objects.all()
+    serializer_class = ChannelSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_class = ChannelFilter
+    ordering_fileds = ['date_created', 'title']
+    search_fields = ['title', 'bio']
+
+
+
+
+
+class ChannelSubsVeiwSet(viewsets.ModelViewSet):
+    queryset = Channel.objects.all()
+    serializer_class = ChannelSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_class = ChannelFilter
+    ordering_fields = ['date_created', 'title']
+    search_fields = ['title', 'bio', 'slug']    
