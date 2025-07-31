@@ -2,7 +2,7 @@ from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from .models import UserAccount, UserAvatar
 
 from .serializers import( CreateUserAccountSerializer, LoginSerializer,
-CreateUserAvatarSerializer, UserAvatarSerializer, EditUserAccountSerializer, DetailUserAccountSerializer)
+CreateUserAvatarSerializer, UserAvatarSerializer, EditUserAccountSerializer, DetailUserAccountSerializer, PasswordResetRequestSerializer)
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
@@ -182,3 +182,14 @@ class DetailAccountView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+    
+
+
+
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"detail":"link for resest password has been sent to your email"})

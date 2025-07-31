@@ -44,7 +44,7 @@ class EditChannelSerializer(serializers.ModelSerializer):
 
 
     def get_subscriber_count(self, obj):
-        return obj.subscribers_count()
+        return obj.subscribers.count()
 
     def validate_admins(self, value):
         request = self.context.get("request")

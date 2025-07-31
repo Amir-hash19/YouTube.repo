@@ -4,7 +4,8 @@ from django.contrib.auth.password_validation import validate_password
 from .models import UserAccount, UserAvatar
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.urls import reverse
 
 
 
@@ -121,3 +122,31 @@ class DetailUserAccountSerializer(ModelSerializer):
         model = UserAccount
         field = ["username", "email", "date_added", "gender"]
         
+
+
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+    def validate_email(self, value):
+        if not UserAccount.objects.filter(email=value).exists():
+            raise serializers.ValidationError("email does not exists")
+        return value
+    
+
+    def post(self):
+        email = self.validated_data["email"]
+        user = UserAccount.objects.get(email=email)
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(user)
+        uid = user.pk
+
+
+        reset_link = f"http://youtube.com/reset-password/{uid}/{token}/"
+
+        user.email_user(
+            subject="reset password",
+            message="برای بازیابی رمز عبور روی لینک زیر کلیک کنید:\n{reset_link}"
+        )
