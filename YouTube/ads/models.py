@@ -6,7 +6,7 @@ from user_managment.models import UserAccount
 
 
 class Advertiser(models.Model):
-    user = models.OneToOneField(to=UserAccount, on_delete=models.CASCADE)
+    ali = models.OneToOneField(to=UserAccount, on_delete=models.CASCADE)
     business_name = models.CharField(max_length=255)
     contact_email = models.EmailField(unique=True)
     approved = models.BooleanField(default=False)
