@@ -128,3 +128,48 @@ class TestUserAccountView(TestCase):
         HTTP_AUTHORIZATION=f"Bearer {token}")
 
         self.assertEqual(response.status_code, 200)      
+
+
+
+
+"""write tests with pytest"""
+from rest_framework.test import APIClient, APITestCase
+from django.urls import reverse
+import pytest
+
+
+
+
+class TestUserAccountApi(APITestCase):
+    def setUp(self):
+        self.user = UserAccount.objects.create_user(
+            username="ali",
+            email="ali@example.com",
+            password="StrongPass123!"
+        )
+        self.client = APIClient()
+
+
+    def test_get_profile_response_200(self):
+        # authenticate کردن کاربر
+        self.client.force_authenticate(user=self.user)
+        
+        url = reverse("detail-user")
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, 200)       
+
+
+
+
+@pytest.fixture
+def api_client():
+    normal_user = APIClient()
+    return normal_user
+
+
+@pytest.fixture
+def common_user():
+    user = UserAccount.objects.create_user(email="admin@admin.com"
+                        ,password="123456amir", username="amir@12")
+    return user
