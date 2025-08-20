@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import( CreateUserAccountView, LoginView, CreateUserAvatar,
 EditAvatar, EditUserAccountView, DeleteUserAccountView, DeleteUserAvatarView, DetailAccountView, PasswordResetRequestView)
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 
 
@@ -13,7 +15,10 @@ urlpatterns = [
     path("User/slug:slug/delete/", DeleteUserAccountView.as_view(), name="delete-useraccount"),
     path("User/slug:slug/avatar/",DeleteUserAvatarView.as_view(), name="delete-user-avatar"),
     path("User/detail/", DetailAccountView.as_view(), name="detail-user"),
-    path("User/resetpassword/", PasswordResetRequestView.as_view())
+    path("User/resetpassword/", PasswordResetRequestView.as_view()),
+
+
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),  # برای گرفتن access جدید
 
 ]
 

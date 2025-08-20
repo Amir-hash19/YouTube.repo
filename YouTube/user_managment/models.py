@@ -9,9 +9,11 @@ import re
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password, username=None, birthday=None, gender=None):
+    def create_user(self, email, password, username, birthday=None, gender=None):
         if not email:
             raise MissingEmailError()
+        if not username:
+            raise ValidationError("Username must be set")
 
         if self.model.objects.filter(email=email).exists():
             raise EmailAlreadyExistsError()
@@ -97,7 +99,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 class UserAvatar(models.Model):
     user = models.ForeignKey(to=UserAccount,  on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='avatars/')
+    image = models.ImageField(upload_to='avatars/', null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique=True)
 

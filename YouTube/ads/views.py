@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import mixins
 from .models import Advertiser, AdVideo
 from rest_framework.permissions import IsAdminUser
@@ -16,9 +16,9 @@ class ListAdvertiserView(GenericAPIView, mixins.ListModelMixin,
         return self.list(request, *args, **kwargs)
     
 
-
+"""
 class AdDetailView(GenericAPIView, mixins.RetrieveModelMixin, 
-                mixins.UpdateModelMixin):
+                mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     permission_classes = [IsAdvertismentUser]
     serializer_class = AdvertiserSerializer
     lookup_field = 'slug'
@@ -31,5 +31,22 @@ class AdDetailView(GenericAPIView, mixins.RetrieveModelMixin,
     
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+"""
+
+
+
+
+
+
+class AdDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdvertismentUser]
+    serializer_class = AdvertiserSerializer
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        return Advertiser.objects.filter(user=self.request.user)    
 
 
