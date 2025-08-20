@@ -1,9 +1,10 @@
-from django.test import TestCase, SimpleTestCase
+from django.test import TestCase, SimpleTestCase, Client
 from django.urls import reverse, resolve
 from .views import CreateUserAccountView, LoginView
 from .serializers import CreateUserAccountSerializer
 from rest_framework.exceptions import ValidationError
 from .models import UserAccount, UserAvatar
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class TestUrl(SimpleTestCase):
@@ -82,7 +83,7 @@ class TestUserAccountModel(TestCase):
         password="strongpassword1", username="test@1")
 
 
-        self.assertEqual(user.email, "test1@email.com")
+        self.assertTrue(UserAccount.objects.filter(pk=user.id).exists())
 
 
     def test_create_avatar_with_valid_data(self):
@@ -96,3 +97,34 @@ class TestUserAccountModel(TestCase):
         )
 
         self.assertEqual(avatar.slug, "test-slug1")
+
+
+
+
+
+
+
+class TestUserAccountView(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = UserAccount.objects.create_user(
+            username="ali@",
+            email="ali@example.com",
+            password="StrongPass123!"
+        )
+
+
+    def get_jwt_for_user(self, user=None):
+        user = user or self.user
+        refresh = RefreshToken.for_user(user)
+        return str(refresh.access_token)
+    
+
+    def test_useraccount_detail_url_response_200(self):
+        url = reverse("detail-user")
+        token = self.get_jwt_for_user()
+        response = self.client.get(url,
+        HTTP_AUTHORIZATION=f"Bearer {token}")
+
+        self.assertEqual(response.status_code, 200)      

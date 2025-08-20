@@ -120,7 +120,7 @@ class EditUserAccountSerializer(serializers.ModelSerializer):
 class DetailUserAccountSerializer(ModelSerializer):
     class Meta:
         model = UserAccount
-        field = ["username", "email", "date_added", "gender"]
+        fields = ["username", "email", "date_added", "gender"]
         
 
 
