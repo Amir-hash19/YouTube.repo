@@ -14,6 +14,9 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 
+#caching tools 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 # class CreateUserAccountView(CreateAPIView):
 #     permission_classes = [AllowAny]
@@ -175,7 +178,7 @@ class DeleteUserAvatarView(APIView):
 
 
 
-
+@method_decorator(cache_page(60*5), name="retrieve")
 class DetailAccountView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = DetailUserAccountSerializer

@@ -195,3 +195,19 @@ AUTH_USER_MODEL = "user_managment.UserAccount"
 
 # # Looking to send emails in production? Check out our Email API/SMTP product!
 # EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/2",  # دیتابیس شماره 2
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # اختیاری: برای سریالایز کردن
+            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
+            # اختیاری: برای فشرده‌سازی
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+        }
+    }
+}

@@ -17,6 +17,10 @@ from rest_framework import viewsets
 from search.views import SubChannelFilter
 
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
+
 class CreateChannelView(APIView):
     permission_classes = [IsAuthenticated]
     throttle_classes = [CreateChannelThrottle]
@@ -159,7 +163,7 @@ class DetailChannelView(APIView):
 
 
 class ChannelViewSet(viewsets.ModelViewSet):
-    queryset = Channel.objects.all()
+    queryset = Channel.objects.all().order_by("-date_created")
     serializer_class = ChannelSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = ChannelFilter
@@ -169,7 +173,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
 
 
-
+@method_decorator(cache_page(60*5), name="list")
 class ChannelSubsVeiwSet(viewsets.ModelViewSet):
     queryset = Channel.objects.all()
     serializer_class = ChannelSerializer
