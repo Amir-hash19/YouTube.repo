@@ -44,3 +44,6 @@ class SubChannelFilter(filters.FilterSet):
 
     def filter_max_subscribers(self, queryset, name, value):
         return queryset.annotate(sub_count=Count('subscribers')).filter(sub_count__lte=value)
+
+
+

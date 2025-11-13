@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_filters',
     'rest_framework_simplejwt.token_blacklist',
-    'storages'
+    'storages',
+    'django_elasticsearch_dsl',
 ]
 
 
@@ -210,4 +211,13 @@ CACHES = {
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
         }
     }
+}
+
+
+
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://localhost:9200'
+    },
 }
